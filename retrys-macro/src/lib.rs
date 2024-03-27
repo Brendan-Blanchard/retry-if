@@ -1,8 +1,8 @@
 use quote::quote;
-use syn::punctuated::Punctuated;
-use syn::parse::{Parser, ParseStream};
 use syn::parse::Parse;
-use syn::{ItemFn, TraitItemFn, ImplItemFn};
+use syn::parse::{ParseStream, Parser};
+use syn::punctuated::Punctuated;
+use syn::{ImplItemFn, ItemFn};
 
 // TODO: see https://github.com/stonecodekiller/rate-limit/blob/master/src/lib.rs for arg parsing
 
@@ -21,26 +21,27 @@ use syn::{ItemFn, TraitItemFn, ImplItemFn};
 
 enum Functions {
     Free(ItemFn),
-    Trait(TraitItemFn),
     Impl(ImplItemFn),
 }
 
 impl Parse for Functions {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        if let Ok(free_fn) = input.parse() {
-            Ok(Functions::Free(free_fn))
-        } else if let Ok(trait_fn) = input.parse() {
-            Ok(Functions::Trait(trait_fn))
-        } else if let Ok(impl_fn) = input.parse() {
+        // TODO: this always parses to ImplItemFn...?
+        if let Ok(impl_fn) = input.parse() {
             Ok(Functions::Impl(impl_fn))
+        } else if let Ok(free_fn) = input.parse() {
+            Ok(Functions::Free(free_fn))
         } else {
-            panic!("failure!");
+            panic!("failed to parse item under #[retry(...)] as a function or impl method");
         }
     }
 }
 
 #[proc_macro_attribute]
-pub fn retry(args: proc_macro::TokenStream, item: proc_macro::TokenStream) -> proc_macro::TokenStream {
+pub fn retry(
+    args: proc_macro::TokenStream,
+    item: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
     let comma_punctuated = Punctuated::<syn::Ident, syn::Token![,]>::parse_separated_nonempty;
 
     let punctuated_args = comma_punctuated.parse(args).unwrap();
@@ -50,12 +51,12 @@ pub fn retry(args: proc_macro::TokenStream, item: proc_macro::TokenStream) -> pr
 
     eprintln!("{:?}", variant);
 
-    let parsed: Functions = syn::parse(item.clone()).expect("failed to parse input");
+    let parsed: Functions =
+        syn::parse(item.clone()).expect("failed to parse item under #[retry(...)]");
 
     match parsed {
         Functions::Free(free_fn) => decorate_free_fn(free_fn),
-        Functions::Trait(_) => item,
-        Functions::Impl(_) => item,
+        Functions::Impl(impl_fn) => decorate_impl_fn(impl_fn),
     }
 }
 
@@ -69,8 +70,26 @@ fn decorate_free_fn(free_fn: ItemFn) -> proc_macro::TokenStream {
         #(#attrs)*
         #vis #sig {
             println!("Free function decorated!");
-            
+
             #block
         }
-    }).into()
+    })
+    .into()
+}
+
+fn decorate_impl_fn(impl_fn: ImplItemFn) -> proc_macro::TokenStream {
+    let attrs = &impl_fn.attrs;
+    let vis = &impl_fn.vis;
+    let sig = &impl_fn.sig;
+    let block = &impl_fn.block;
+
+    (quote! {
+        #(#attrs)*
+        #vis #sig {
+            println!("Impl fn decorated!");
+
+            #block
+        }
+    })
+    .into()
 }
