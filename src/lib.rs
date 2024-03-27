@@ -13,17 +13,19 @@ mod tests {
     struct AsyncTraitImpl {}
 
     impl AsyncTrait for AsyncTraitImpl {
-        #[retry]
+        #[retry(Ok)]
         async fn async_method(&self) {}
 
-        #[retry]
+        #[retry(Ok)]
         async fn async_fn() {}
     }
 
-    #[test]
-    fn test_basic_async_function() {
-        #[retry]
+    #[tokio::test]
+    async fn test_basic_async_function() {
+        #[retry(Error)]
         async fn test_fn() {}
+
+        test_fn().await;
     }
 
     #[tokio::test]
