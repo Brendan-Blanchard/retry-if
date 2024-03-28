@@ -1,3 +1,4 @@
+use proc_macro2::Ident;
 use quote::quote;
 use syn::parse::Parse;
 use syn::parse::{ParseStream, Parser};
@@ -47,20 +48,26 @@ pub fn retry(
     let punctuated_args = comma_punctuated.parse(args).unwrap();
     let mut punctuated_args_iter = punctuated_args.iter();
 
-    let variant = punctuated_args_iter.next().unwrap();
+    let config = punctuated_args_iter
+        .next()
+        .expect("configuration must be supplied as an argument to #[retry(...)]");
+    let should_retry = punctuated_args_iter
+        .next()
+        .expect("should_retry test must be supplied as the second argument to #[retry(...)]");
 
-    eprintln!("{:?}", variant);
+    eprintln!("{:?}", config);
+    eprintln!("{:?}", should_retry);
 
     let parsed: Functions =
         syn::parse(item.clone()).expect("failed to parse item under #[retry(...)]");
 
     match parsed {
-        Functions::Free(free_fn) => decorate_free_fn(free_fn),
-        Functions::Impl(impl_fn) => decorate_impl_fn(impl_fn),
+        Functions::Free(free_fn) => decorate_free_fn(free_fn, config, should_retry),
+        Functions::Impl(impl_fn) => decorate_impl_fn(impl_fn, config, should_retry),
     }
 }
 
-fn decorate_free_fn(free_fn: ItemFn) -> proc_macro::TokenStream {
+fn decorate_free_fn(free_fn: ItemFn, config: &Ident, test: &Ident) -> proc_macro::TokenStream {
     let attrs = &free_fn.attrs;
     let vis = &free_fn.vis;
     let sig = &free_fn.sig;
@@ -77,7 +84,11 @@ fn decorate_free_fn(free_fn: ItemFn) -> proc_macro::TokenStream {
     .into()
 }
 
-fn decorate_impl_fn(impl_fn: ImplItemFn) -> proc_macro::TokenStream {
+fn decorate_impl_fn(
+    impl_fn: ImplItemFn,
+    config: &Ident,
+    should_retry: &Ident,
+) -> proc_macro::TokenStream {
     let attrs = &impl_fn.attrs;
     let vis = &impl_fn.vis;
     let sig = &impl_fn.sig;
@@ -88,7 +99,31 @@ fn decorate_impl_fn(impl_fn: ImplItemFn) -> proc_macro::TokenStream {
         #vis #sig {
             println!("Impl fn decorated!");
 
-            #block
+            let mut result = #block;
+            let start = tokio::time::Instant::now();
+
+            for attempt in 0..#config.max_tries {
+                if !#should_retry(result) {
+                    break;
+                }
+
+                let retry_wait = #config.t_wait.mul_f64(#config.backoff.powi(attempt)).min(#config.backoff_max.unwrap_or(std::time::Duration::MAX));
+
+                let now = tokio::time::Instant::now();
+                let since_start = now - start;
+                let will_exceed_time = since_start + retry_wait > #config.t_wait_max;
+
+                if will_exceed_time {
+                    break;
+                }
+
+                println!("Sleeping: {:?}", retry_wait);
+                tokio::time::sleep(retry_wait).await;
+
+                result = #block;
+            }
+
+            result
         }
     })
     .into()
