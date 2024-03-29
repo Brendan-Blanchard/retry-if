@@ -14,31 +14,3 @@ pub struct ExponentialBackoffConfig {
     pub t_wait_max: Option<Duration>,
     pub backoff_max: Option<Duration>,
 }
-
-#[cfg(test)]
-mod tests {
-    use std::time::Duration;
-
-    #[tokio::test]
-    async fn test() {
-        let duration = Duration::from_secs(2);
-
-        let new = duration.mul_f64(2.5);
-
-        println!("{:?}", new);
-
-        tokio::time::sleep(new).await;
-    }
-
-    #[tokio::test]
-    async fn test_pow() {
-        let wait = Duration::from_secs(2);
-        let wait_max = Some(Duration::from_secs(3));
-        let backoff: f64 = 2.0;
-
-        for attempt in 0..3 {
-            let retry_wait = wait.mul_f64(backoff.powi(attempt));
-            println!("{:?}", retry_wait.min(wait_max.unwrap_or(Duration::MAX)));
-        }
-    }
-}
