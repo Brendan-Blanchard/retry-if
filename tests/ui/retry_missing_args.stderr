@@ -1,0 +1,7 @@
+error: custom attribute panicked
+  --> tests/ui/retry_missing_args.rs:17:1
+   |
+17 | #[retry]
+   | ^^^^^^^^
+   |
+   = help: message: retry macro requires arguments of ExponentialBackoffConfig and 'should retry' function: Error("unexpected end of input, expected identifier")

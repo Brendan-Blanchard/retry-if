@@ -10,7 +10,9 @@ pub fn retry(
     item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let comma_punctuated = Punctuated::<Ident, syn::Token![,]>::parse_separated_nonempty;
-    let punctuated_args = comma_punctuated.parse(args).unwrap();
+    let punctuated_args = comma_punctuated.parse(args).expect(
+        "retry macro requires arguments of ExponentialBackoffConfig and 'should retry' function",
+    );
     let mut punctuated_args_iter = punctuated_args.iter();
 
     let config = punctuated_args_iter
