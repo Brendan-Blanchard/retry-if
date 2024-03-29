@@ -1,8 +1,8 @@
-//! This example tests a backoff configuration with no maximum on individual waits, no overall wait
-//! maximum, and a max of 5 retries that causes it to exit.
+//! This example tests a backoff configuration with a dynamic `should_retry` function that will
+//! return false after 2 attempts.
 //!
-//! The expectation is that 5 retries will take 1s, 2s, 4s, 8s, and 16s for a total of 31s of
-//! execution time, and 6 increments of the counter.
+//! The expectation is that two retries will take 1s, 3s, for a total of 4s of execution time. No
+//! other conditions will be triggered.
 use retrys::{retry, ExponentialBackoffConfig};
 use std::time::Duration;
 use tokio::time::{pause, Instant};
@@ -10,13 +10,13 @@ use tokio::time::{pause, Instant};
 const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {
     max_retries: 5,
     t_wait: Duration::from_secs(1),
-    backoff: 2.0,
+    backoff: 3.0,
     t_wait_max: None,
     backoff_max: None,
 };
 
-fn should_retry(_i: i64) -> bool {
-    true
+fn should_retry(i: i64) -> bool {
+    i < 3
 }
 
 pub struct Counter {
@@ -41,9 +41,9 @@ async fn main() {
     let end = Instant::now();
     let duration = end - start;
 
-    // max of 5 retries, waits of 1s, 2s, 4s, 8s, 16s = 31s
-    assert!(duration > Duration::from_secs(31));
-    assert!(duration < Duration::from_millis(31100));
-    // initial attempt + 5 retries
-    assert_eq!(6, counter.count);
+    // waits of 1s, 3s = 4s
+    assert!(duration > Duration::from_secs(4));
+    assert!(duration < Duration::from_millis(4100));
+    // initial attempt + 2 retries
+    assert_eq!(3, counter.count);
 }
