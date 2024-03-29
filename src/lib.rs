@@ -1,17 +1,17 @@
 mod configuration;
 
+pub use configuration::ExponentialBackoffConfig;
 pub use retrys_macro::retry;
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::configuration::ExponentialBackoffConfig;
     use std::time::Duration;
 
     const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {
-        max_tries: 5,
+        max_retries: 5,
         t_wait: Duration::from_secs(1),
-        t_wait_max: Duration::from_secs(10),
+        t_wait_max: Some(Duration::from_secs(10)),
         backoff: 2.0,
         backoff_max: Some(Duration::from_secs(3)),
     };
@@ -21,18 +21,21 @@ mod tests {
     }
 
     trait AsyncTrait {
-        async fn async_method(&self) -> i32;
+        async fn async_method(&mut self) -> i32;
 
         async fn async_fn() -> i32;
     }
 
-    struct AsyncTraitImpl {}
+    struct AsyncTraitImpl {
+        i: i32,
+    }
 
     impl AsyncTrait for AsyncTraitImpl {
         #[retry(BACKOFF_CONFIG, should_retry)]
-        async fn async_method(&self) -> i32 {
+        async fn async_method(&mut self) -> i32 {
             println!("Running...");
-            0
+            self.i += 1;
+            self.i
         }
 
         #[retry(BACKOFF_CONFIG, should_retry)]
@@ -55,10 +58,12 @@ mod tests {
 
     #[tokio::test]
     async fn test_trait_async_fn() {
-        let trait_impl = AsyncTraitImpl {};
+        let mut trait_impl = AsyncTraitImpl { i: 0 };
 
         trait_impl.async_method().await;
 
         AsyncTraitImpl::async_fn().await;
+
+        println!("{}", trait_impl.i);
     }
 }

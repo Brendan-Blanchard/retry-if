@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 retrys-macro = { version = "0.1.0", path = "retrys-macro" }
-tokio = { version = "1.36.0", features = ["full"] }
+tokio = { version = "1.36.0", features = ["full", "test-util"] }
 
 [dev-dependencies]
 trybuild = "1.0"

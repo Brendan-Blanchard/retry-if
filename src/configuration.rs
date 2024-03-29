@@ -8,17 +8,16 @@ use std::time::Duration;
 ///
 /// TODO: example w/ series of waits
 pub struct ExponentialBackoffConfig {
-    pub max_tries: i32,
+    pub max_retries: i32,
     pub t_wait: Duration,
-    pub t_wait_max: Duration,
     pub backoff: f64,
+    pub t_wait_max: Option<Duration>,
     pub backoff_max: Option<Duration>,
 }
 
 #[cfg(test)]
 mod tests {
     use std::time::Duration;
-    use tokio::time::Instant;
 
     #[tokio::test]
     async fn test() {
