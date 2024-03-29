@@ -1,0 +1,7 @@
+error: custom attribute panicked
+  --> tests/ui/retry_on_non_function.rs:17:1
+   |
+17 | #[retry(BACKOFF_CONFIG, should_retry)]
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: message: failed to parse item under #[retry(...)] as function: Error("expected `fn`")
