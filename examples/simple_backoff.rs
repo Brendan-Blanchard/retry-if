@@ -4,9 +4,9 @@ use std::num::TryFromIntError;
 use std::time::Duration;
 use tokio::time::{pause, Instant};
 
-// A backoff that will retry a failing function up to 5 times, waiting 1s the first retry and 
+// A backoff that will retry a failing function up to 5 times, waiting 1s the first retry and
 //  doubling the wait with each retry.
-// It specifies no overall limit for retries (t_wait_max), nor a maximum for individual retry waits 
+// It specifies no overall limit for retries (t_wait_max), nor a maximum for individual retry waits
 //  (backoff_max).
 const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {
     max_retries: 5,
@@ -21,9 +21,9 @@ const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {
 async fn main() {
     pause();
     let start = Instant::now();
-    
+
     let _ = fallible_call().await;
-    
+
     let end = Instant::now();
 
     let elapsed = end - start;
