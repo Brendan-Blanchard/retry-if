@@ -7,6 +7,10 @@ edition = "2021"
 proc-macro2 = "1.0"
 quote = "1.0"
 syn = { version = "2.0", features = ["full"] }
+tracing = { version = "0.1.4", optional = true }
+
+[features]
+tracing = ["dep:tracing"]
 
 [lib]
 proc-macro = true

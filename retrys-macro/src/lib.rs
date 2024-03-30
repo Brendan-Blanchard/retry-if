@@ -63,8 +63,10 @@ fn decorate_fn(impl_fn: ItemFn, config: &Ident, should_retry: &Ident) -> proc_ma
                     }
                 }
 
-                // TODO: add tracing via a cfg/feature?
-                println!("Sleeping: {:?}", retry_wait);
+                if cfg!(feature = "tracing") {
+                    tracing::info!("Sleeping {retry_wait:?} on attempt {attempt}");
+                }
+
                 tokio::time::sleep(retry_wait).await;
 
                 result = #block;
