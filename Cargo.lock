@@ -260,11 +260,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "retrys"
+name = "retry-if"
 version = "0.1.0"
 dependencies = [
- "retrys",
- "retrys-macro",
+ "retry-if",
+ "retry-if-macro",
  "tokio",
  "tracing",
  "tracing-subscriber",
@@ -272,7 +272,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "retrys-macro"
+name = "retry-if-macro"
 version = "0.1.0"
 dependencies = [
  "proc-macro2",

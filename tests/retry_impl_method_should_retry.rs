@@ -3,7 +3,7 @@
 //!
 //! The expectation is that two retries will take 1s, 3s, for a total of 4s of execution time. No
 //! other conditions will be triggered.
-use retrys::{retry, ExponentialBackoffConfig};
+use retry_if::{retry, ExponentialBackoffConfig};
 use std::time::Duration;
 use tokio::time::{pause, Instant};
 

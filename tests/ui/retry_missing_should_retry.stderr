@@ -1,7 +1,7 @@
 error: custom attribute panicked
-  --> tests/ui/retry_missing_should_retry.rs:17:1
+  --> tests/ui/retry_missing_should_retry.rs:16:1
    |
-17 | #[retry(BACKOFF_CONFIG)]
+16 | #[retry(BACKOFF_CONFIG)]
    | ^^^^^^^^^^^^^^^^^^^^^^^^
    |
    = help: message: should_retry test must be supplied as the second argument to #[retry(...)]

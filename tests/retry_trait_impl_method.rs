@@ -4,7 +4,7 @@
 //! The expectation is that retries will take 1s, 2s, 2.5s, 2.5s for a total of 8s of execution time.
 //! This is because at 8s, it's clear that another wait of 2.5s would exceed the maximum time of 10s,
 //! so it exits early.
-use retrys::{retry, ExponentialBackoffConfig};
+use retry_if::{retry, ExponentialBackoffConfig};
 use std::time::Duration;
 use tokio::time::{pause, Instant};
 

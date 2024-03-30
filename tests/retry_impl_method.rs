@@ -3,7 +3,7 @@
 //!
 //! The expectation is that 5 retries will take 1s, 2s, 4s, 8s, and 16s for a total of 31s of
 //! execution time, and 6 increments of the counter.
-use retrys::{retry, ExponentialBackoffConfig};
+use retry_if::{retry, ExponentialBackoffConfig};
 use std::time::Duration;
 use tokio::time::{pause, Instant};
 

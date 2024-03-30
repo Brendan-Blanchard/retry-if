@@ -1,5 +1,4 @@
-use retrys::ExponentialBackoffConfig;
-use retrys_macro::retry;
+use retry_if::{retry, ExponentialBackoffConfig};
 use std::num::TryFromIntError;
 use std::time::Duration;
 use tokio::time::{pause, Instant};

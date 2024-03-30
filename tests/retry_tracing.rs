@@ -2,7 +2,7 @@
 //!
 //! It first sets up a subscriber that prints to stdout, then conducts a normal test so the output
 //! of retries can be seen in the console.
-use retrys::{retry, ExponentialBackoffConfig};
+use retry_if::{retry, ExponentialBackoffConfig};
 use std::time::Duration;
 use tokio::time::{pause, Instant};
 use tracing_subscriber::layer::SubscriberExt;

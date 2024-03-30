@@ -1,6 +1,6 @@
 //! This example tests a backoff configuration using a function that returns false for if it should
 //! retry, thus resulting in no retries at all.
-use retrys::{retry, ExponentialBackoffConfig};
+use retry_if::{retry, ExponentialBackoffConfig};
 use std::time::Duration;
 use tokio::time::Instant;
 

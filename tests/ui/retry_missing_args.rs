@@ -1,5 +1,4 @@
-use retrys::retry;
-use retrys::ExponentialBackoffConfig;
+use retry_if::{retry, ExponentialBackoffConfig};
 use std::time::Duration;
 
 const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {

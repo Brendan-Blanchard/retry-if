@@ -1,18 +1,18 @@
 [package]
-name = "retrys"
+name = "retry-if"
 version = "0.1.0"
 edition = "2021"
 resolver = "2"
 
 [dependencies]
-retrys-macro = { version = "0.1.0", path = "retrys-macro", default-features = false }
+retry-if-macro = { version = "0.1.0", path = "retry-if-macro", default-features = false }
 tokio = { version = "1.36.0", features = ["full", "test-util"] }
 
 [dev-dependencies]
 trybuild = "1.0"
 tracing = "0.1.40"
 tracing-subscriber = "0.3.18"
-retrys = { path = ".", features = ["tracing"] }
+retry-if = { path = ".", features = ["tracing"] }
 
 [features]
-tracing = ["retrys-macro/tracing"]
+tracing = ["retry-if-macro/tracing"]
