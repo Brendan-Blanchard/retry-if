@@ -9,7 +9,7 @@ const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {
     backoff_max: None,
 };
 
-fn should_retry(_: ()) -> bool {
+fn retry_if(_: ()) -> bool {
     true
 }
 

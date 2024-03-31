@@ -1,0 +1,7 @@
+error: custom attribute panicked
+  --> tests/ui/retry_missing_retry_if.rs:16:1
+   |
+16 | #[retry(BACKOFF_CONFIG)]
+   | ^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: message: retry_if test must be supplied as the second argument to #[retry(...)]

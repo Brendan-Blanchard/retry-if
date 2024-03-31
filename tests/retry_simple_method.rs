@@ -13,12 +13,12 @@ const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {
 };
 
 #[tokio::test]
-async fn test_should_retry() {
-    fn should_retry(_: ()) -> bool {
+async fn test_retry_if() {
+    fn retry_if(_: ()) -> bool {
         false
     }
 
-    #[retry(BACKOFF_CONFIG, should_retry)]
+    #[retry(BACKOFF_CONFIG, retry_if)]
     async fn method() {}
 
     let start = Instant::now();

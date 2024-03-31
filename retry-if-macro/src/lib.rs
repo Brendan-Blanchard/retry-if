@@ -19,17 +19,21 @@ pub fn retry(
         .next()
         .expect("configuration must be supplied as an argument to #[retry(...)]");
 
-    let should_retry = punctuated_args_iter
+    let retry_if = punctuated_args_iter
         .next()
-        .expect("should_retry test must be supplied as the second argument to #[retry(...)]");
+        .expect("retry_if test must be supplied as the second argument to #[retry(...)]");
 
     let parsed: ItemFn =
         syn::parse(item).expect("failed to parse item under #[retry(...)] as function");
 
-    decorate_fn(parsed, config, should_retry)
+    decorate_fn(parsed, config, retry_if)
 }
 
-fn decorate_fn(impl_fn: ItemFn, config: &Ident, should_retry: &Ident) -> proc_macro::TokenStream {
+/// Wrap the underlying implementation with a retry.
+///
+/// This takes the underlying function as [ItemFn], the backoff configuration (defined in parent
+/// crate) as an `&Ident`, and the `&Ident` for the retry function
+fn decorate_fn(impl_fn: ItemFn, config: &Ident, retry_if: &Ident) -> proc_macro::TokenStream {
     let attrs = &impl_fn.attrs;
     let vis = &impl_fn.vis;
     let sig = &impl_fn.sig;
@@ -45,7 +49,7 @@ fn decorate_fn(impl_fn: ItemFn, config: &Ident, should_retry: &Ident) -> proc_ma
             let mut result = #block;
 
             for attempt in 0..max_tries {
-                if !#should_retry(result) {
+                if !#retry_if(result) {
                     break;
                 }
 

@@ -1,4 +1,4 @@
-//! This example tests a backoff configuration with a dynamic `should_retry` function that will
+//! This example tests a backoff configuration with a dynamic `retry_if` function that will
 //! return false after 2 attempts.
 //!
 //! The expectation is that two retries will take 1s, 3s, for a total of 4s of execution time. No
@@ -15,7 +15,7 @@ const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {
     backoff_max: None,
 };
 
-fn should_retry(i: i64) -> bool {
+fn retry_if(i: i64) -> bool {
     i < 3
 }
 
@@ -24,7 +24,7 @@ pub struct Counter {
 }
 
 impl Counter {
-    #[retry(BACKOFF_CONFIG, should_retry)]
+    #[retry(BACKOFF_CONFIG, retry_if)]
     async fn increase_count(&mut self) -> i64 {
         self.count += 1;
         self.count

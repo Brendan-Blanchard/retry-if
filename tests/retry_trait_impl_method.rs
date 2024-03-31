@@ -16,7 +16,7 @@ const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {
     backoff_max: Some(Duration::from_millis(2500)),
 };
 
-fn should_retry(_i: i64) -> bool {
+fn retry_if(_i: i64) -> bool {
     true
 }
 
@@ -29,7 +29,7 @@ pub struct SimpleCounter {
 }
 
 impl Counter for SimpleCounter {
-    #[retry(BACKOFF_CONFIG, should_retry)]
+    #[retry(BACKOFF_CONFIG, retry_if)]
     async fn increase_count(&mut self) -> i64 {
         self.count += 1;
         self.count

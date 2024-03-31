@@ -9,11 +9,11 @@ const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {
     backoff_max: None,
 };
 
-fn should_retry(_: ()) -> bool {
+fn retry_if(_: ()) -> bool {
     true
 }
 
-#[retry(BACKOFF_CONFIG, should_retry)]
+#[retry(BACKOFF_CONFIG, retry_if)]
 pub trait NotAFunction {
     fn some_function(&mut self);
 }
