@@ -53,9 +53,17 @@ async fn main() {
     assert!(elapsed > Duration::from_secs(31));
     assert!(elapsed < Duration::from_millis(31100));
 
-    println!("Total test time: {elapsed:?}")
+    println!("Total test time: {elapsed:?}");
 }
 ```
+
+### Tracing
+
+The crate exposes `tracing` as a feature to enable logging using the tokio [`tracing`] library's `tracing::info!` for
+each of the retry attempts. These currently take the form of: `Sleeping {Duration:?} on attempt {i32}`. The output
+traces will take on whatever instrumented scope is given to the parent function.
+
+[`tracing`]: https://crates.io/crates/tracing
 
 ### Limitations
 
