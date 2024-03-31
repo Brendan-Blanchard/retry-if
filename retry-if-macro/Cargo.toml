@@ -2,6 +2,13 @@
 name = "retry-if-macro"
 version = "0.1.0"
 edition = "2021"
+authors = ["Brendan Blanchard"]
+description = "A tokio-compatible attribute-macro for decorating methods and functions with exponential backoff."
+license = "MIT"
+repository = "https://github.com/Brendan-Blanchard/retry-if-macro"
+keywords = ["tokio", "async", "retry", "backoff"]
+categories = ["asynchronous", "concurrency", "web-programming", "concurrency"]
+exclude = [".idea", ".gitignore", ".github"]
 
 [dependencies]
 proc-macro2 = "1.0"

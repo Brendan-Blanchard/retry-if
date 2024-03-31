@@ -3,6 +3,13 @@ name = "retry-if"
 version = "0.1.0"
 edition = "2021"
 resolver = "2"
+authors = ["Brendan Blanchard"]
+description = "A tokio-compatible attribute-macro for decorating methods and functions with exponential backoff."
+license = "MIT"
+repository = "https://github.com/Brendan-Blanchard/retry-if"
+keywords = ["tokio", "async", "retry", "backoff"]
+categories = ["asynchronous", "concurrency", "web-programming", "concurrency"]
+exclude = [".idea", ".gitignore", ".github"]
 
 [dependencies]
 retry-if-macro = { version = "0.1.0", path = "retry-if-macro", default-features = false }

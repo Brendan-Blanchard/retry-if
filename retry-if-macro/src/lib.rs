@@ -14,7 +14,7 @@ use syn::ItemFn;
 /// The below example sets up a basic retry configuration that will retry up to five times, waiting
 /// at first 1 second, then 2 seconds, 4 seconds, etc.
 ///
-/// There is no configured maxmimum time to retry across all attempts (t_wait_max), nor is there any
+/// There is no configured maximum time to retry across all attempts (t_wait_max), nor is there any
 /// maximum waiting time on each backoff (backoff_max).
 ///
 /// ```no_run
