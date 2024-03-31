@@ -4,4 +4,4 @@ error: custom attribute panicked
 16 | #[retry]
    | ^^^^^^^^
    |
-   = help: message: retry macro requires arguments of ExponentialBackoffConfig and 'should retry' function: Error("unexpected end of input, expected identifier")
+   = help: message: retry macro requires arguments of ExponentialBackoffConfig and 'retry-if' function: Error("unexpected end of input, expected identifier")
