@@ -83,9 +83,15 @@ use std::time::Duration;
 /// };
 /// ```
 pub struct ExponentialBackoffConfig {
+    /// maximum number of retry attempts to make
     pub max_retries: i32,
+    /// initial duration to wait
     pub t_wait: Duration,
+    /// backoff exponent, e.g. `2.0` for a classic exponential backoff
     pub backoff: f64,
+    /// maximum time to attempt retries before returning the last result
     pub t_wait_max: Option<Duration>,
+    /// maximum time to wait for any single retry, i.e. backoff exponentially up to this duration,
+    /// then wait in constant time of `backoff_max`
     pub backoff_max: Option<Duration>,
 }
