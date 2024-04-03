@@ -83,7 +83,7 @@ fn decorate_fn(impl_fn: ItemFn, config: &Ident, retry_if: &Ident) -> proc_macro:
             let mut result = #block;
 
             for attempt in 0..max_tries {
-                if !#retry_if(result) {
+                if !#retry_if(&result) {
                     break;
                 }
 
