@@ -16,7 +16,7 @@ const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {
     backoff_max: Some(Duration::from_millis(2500)),
 };
 
-fn retry_if(_i: i64) -> bool {
+fn retry_if(_i: &i64) -> bool {
     true
 }
 

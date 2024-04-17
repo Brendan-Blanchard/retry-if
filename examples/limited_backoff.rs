@@ -40,7 +40,7 @@ async fn main() {
 
 // this takes any argument of the same type as the output of the decorated function
 //  it returns true if the function should be retried based on the result
-fn retry_if(result: Result<i64, TryFromIntError>) -> bool {
+fn retry_if(result: &Result<i64, TryFromIntError>) -> bool {
     result.is_err()
 }
 

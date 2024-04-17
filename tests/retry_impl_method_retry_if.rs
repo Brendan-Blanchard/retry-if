@@ -15,8 +15,8 @@ const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {
     backoff_max: None,
 };
 
-fn retry_if(i: i64) -> bool {
-    i < 3
+fn retry_if(i: &i64) -> bool {
+    *i < 3
 }
 
 pub struct Counter {

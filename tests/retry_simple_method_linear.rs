@@ -16,7 +16,7 @@ const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {
 #[tokio::test]
 async fn test_retry_if() {
     pause();
-    fn retry_if(_: ()) -> bool {
+    fn retry_if(_: &()) -> bool {
         true
     }
 
