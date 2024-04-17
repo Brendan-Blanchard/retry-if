@@ -13,10 +13,10 @@ exclude = [".idea", ".gitignore", ".github"]
 
 [dependencies]
 retry-if-macro = { version = "0.1.0", path = "retry-if-macro", default-features = false }
-tokio = { version = "1.36.0", features = ["full", "test-util"] }
+tokio = { version = "1.37.0", features = ["full", "test-util"] }
 
 [dev-dependencies]
-trybuild = "1.0"
+trybuild = "1.0.91"
 tracing = "0.1.40"
 tracing-subscriber = "0.3.18"
 retry-if = { path = ".", features = ["tracing"] }
