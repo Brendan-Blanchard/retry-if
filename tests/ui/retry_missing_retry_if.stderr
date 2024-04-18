@@ -4,4 +4,4 @@ error: custom attribute panicked
 16 | #[retry(BACKOFF_CONFIG)]
    | ^^^^^^^^^^^^^^^^^^^^^^^^
    |
-   = help: message: retry_if test must be supplied as the second argument to #[retry(...)]
+   = help: message: retry_if predicate must be supplied as the second argument to #[retry(...)]
