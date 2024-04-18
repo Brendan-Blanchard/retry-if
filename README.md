@@ -1,6 +1,6 @@
 # Retry-If
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![badge](https://github.com/Brendan-Blanchard/retry-if/actions/workflows/main.yml/badge.svg)[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A predicate-based retry decorator for retrying arbitrary functions using an exponential backoff strategy.
 
