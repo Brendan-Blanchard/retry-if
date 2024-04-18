@@ -26,7 +26,7 @@ use syn::ItemFn;
 ///     backoff_max: None,
 /// };
 ///
-/// // this takes any argument of the same type as the output of the decorated function
+/// // this takes an address of the same type as the output of the decorated function
 /// //  it returns a boolean specifying if the function should be retried based on the result
 /// fn retry_if(result: &Result<i64, TryFromIntError>) -> bool {
 ///     result.is_err()
@@ -55,7 +55,7 @@ pub fn retry(
 
     let retry_if = punctuated_args_iter
         .next()
-        .expect("retry_if test must be supplied as the second argument to #[retry(...)]");
+        .expect("retry_if predicate must be supplied as the second argument to #[retry(...)]");
 
     let parsed: ItemFn =
         syn::parse(item).expect("failed to parse item under #[retry(...)] as function");
