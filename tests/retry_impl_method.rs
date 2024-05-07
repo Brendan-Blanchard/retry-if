@@ -42,8 +42,9 @@ async fn main() {
     let duration = end - start;
 
     // max of 5 retries, waits of 1s, 2s, 4s, 8s, 16s = 31s
+    println!("{:?}", duration);
     assert!(duration > Duration::from_secs(31));
     assert!(duration < Duration::from_millis(31100));
     // initial attempt + 5 retries
-    assert_eq!(6, counter.count);
+    assert_eq!(5, counter.count);
 }

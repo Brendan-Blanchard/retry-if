@@ -80,10 +80,12 @@ fn decorate_fn(impl_fn: ItemFn, config: &Ident, retry_if: &Ident) -> proc_macro:
             let backoff_max = #config.backoff_max.unwrap_or(std::time::Duration::MAX);
             let max_tries = #config.max_retries;
 
-            let mut result = #block;
+            let mut result = None;
 
             for attempt in 0..max_tries {
-                if !#retry_if(&result) {
+                result = Some(#block);
+
+                if !#retry_if(result.as_ref().unwrap()) {
                     break;
                 }
 
@@ -106,12 +108,10 @@ fn decorate_fn(impl_fn: ItemFn, config: &Ident, retry_if: &Ident) -> proc_macro:
                 }
 
                 tokio::time::sleep(retry_wait).await;
-
-                result = #block;
             }
 
-            result
+            result.take().expect("retries failed to produce a value; max_retries must be >= 1")
         }
     })
-    .into()
+        .into()
 }

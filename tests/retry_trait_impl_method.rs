@@ -36,6 +36,14 @@ impl Counter for SimpleCounter {
     }
 }
 
+impl SimpleCounter {
+    // another self-using function to show that counter
+    //  isn't consumed or borrowed inappropriately
+    async fn double_count(&mut self) {
+        self.count *= 2;
+    }
+}
+
 #[tokio::test]
 async fn main() {
     let mut counter = SimpleCounter { count: 0 };
@@ -49,6 +57,8 @@ async fn main() {
     // waits of 1s, 2s, 2.5s, 2.5s, at 8s waiting another 2.5s would exceed time, so it exits early
     assert!(duration > Duration::from_secs(8));
     assert!(duration < Duration::from_millis(8100));
-    // initial attempt + 4 retries
     assert_eq!(5, counter.count);
+
+    counter.double_count().await;
+    assert_eq!(10, counter.count);
 }

@@ -47,7 +47,7 @@ async fn main() {
     assert!(duration > Duration::from_secs(31));
     assert!(duration < Duration::from_millis(31100));
     // initial attempt + 5 retries
-    assert_eq!(6, counter.count);
+    assert_eq!(5, counter.count);
 }
 
 fn set_up_logging() {
