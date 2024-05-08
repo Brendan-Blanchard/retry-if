@@ -13,7 +13,7 @@ exclude = [".idea", ".gitignore", ".github"]
 [dependencies]
 proc-macro2 = "1.0.81"
 quote = "1.0.36"
-syn = { version = "2.0.60", features = ["full"] }
+syn = { version = "2.0.60", features = ["full", "visit-mut"] }
 tracing = { version = "0.1.40", optional = true }
 
 [features]
