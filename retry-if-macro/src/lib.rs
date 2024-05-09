@@ -15,7 +15,7 @@ impl VisitMut for BlockModifier {
             *i = Expr::Match(parse_quote! {
                 match #expr {
                     Ok(val) => val,
-                    Err(err) => break 'block Err(err),
+                    Err(err) => break 'block Err(err.into()),
                 }
             });
         } else if let Expr::Return(expr_return) = i {
