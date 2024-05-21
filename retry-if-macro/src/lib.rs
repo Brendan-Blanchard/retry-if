@@ -2,7 +2,33 @@ use proc_macro2::Ident;
 use quote::quote;
 use syn::parse::Parser;
 use syn::punctuated::Punctuated;
-use syn::ItemFn;
+use syn::{ItemFn, parse_quote, Expr};
+use syn::visit_mut;
+use syn::visit_mut::VisitMut;
+
+struct BlockModifier;
+
+impl VisitMut for BlockModifier {
+    fn visit_expr_mut(&mut self, i: &mut Expr) {
+        if let Expr::Try(expr_try) = i {
+            let expr = &expr_try.expr;
+            *i = Expr::Match(parse_quote! {
+                match #expr {
+                    Ok(val) => val,
+                    Err(err) => break 'block Err(err.into()),
+                }
+            });
+        } else if let Expr::Return(expr_return) = i {
+            let return_value = &expr_return.expr;
+            *i = Expr::Break(parse_quote! {
+                break 'block #return_value
+            });
+        }
+
+        // Important: continue visiting to find nested expressions
+        visit_mut::visit_expr_mut(self, i);
+    }
+}
 
 /// Decorate a function with a given retry configuration.
 ///
@@ -67,10 +93,12 @@ pub fn retry(
 ///
 /// This takes the underlying function as [ItemFn], the backoff configuration (defined in parent
 /// crate) as an `&Ident`, and the `&Ident` for the retry function
-fn decorate_fn(impl_fn: ItemFn, config: &Ident, retry_if: &Ident) -> proc_macro::TokenStream {
+fn decorate_fn(mut impl_fn: ItemFn, config: &Ident, retry_if: &Ident) -> proc_macro::TokenStream {
     let attrs = &impl_fn.attrs;
     let vis = &impl_fn.vis;
     let sig = &impl_fn.sig;
+
+    (BlockModifier {}).visit_block_mut(&mut impl_fn.block);
     let block = &impl_fn.block;
 
     (quote! {
@@ -78,40 +106,40 @@ fn decorate_fn(impl_fn: ItemFn, config: &Ident, retry_if: &Ident) -> proc_macro:
         #vis #sig {
             let start = tokio::time::Instant::now();
             let backoff_max = #config.backoff_max.unwrap_or(std::time::Duration::MAX);
-            let max_tries = #config.max_retries;
+            let mut attempt = 0;
 
-            let mut result = #block;
+            loop {
+                let result = 'block: {
+                    #block
+                };
 
-            for attempt in 0..max_tries {
-                if !#retry_if(&result) {
-                    break;
+                // Return result if retry isn't required, or if we ran out of attempts
+                if !#retry_if(&result) || attempt >= #config.max_retries {
+                    return result;
                 }
 
                 let retry_wait = #config.t_wait
                     .mul_f64(#config.backoff.powi(attempt))
                     .min(backoff_max);
 
+                attempt += 1;
+
                 if let Some(max_wait) = #config.t_wait_max {
                     let now = tokio::time::Instant::now();
                     let since_start = now - start;
-                    let will_exceed_time = since_start + retry_wait > max_wait;
 
-                    if will_exceed_time {
-                        break;
+                    // Return if our overall duration is going to exceed `max_wait`
+                    if since_start + retry_wait > max_wait {
+                        return result;
                     }
                 }
 
                 if cfg!(feature = "tracing") {
                     tracing::info!("Sleeping {retry_wait:?} on attempt {attempt}");
                 }
-
                 tokio::time::sleep(retry_wait).await;
-
-                result = #block;
             }
-
-            result
         }
     })
-    .into()
+        .into()
 }

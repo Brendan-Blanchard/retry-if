@@ -1,6 +1,6 @@
 [package]
 name = "retry-if"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 resolver = "2"
 authors = ["Brendan Blanchard"]
@@ -16,7 +16,7 @@ retry-if-macro = { version = "0.1.0", path = "retry-if-macro", default-features 
 tokio = { version = "1.37.0", features = ["full"] }
 
 [dev-dependencies]
-trybuild = "1.0.91"
+trybuild = "1.0.96"
 tracing = "0.1.40"
 tracing-subscriber = "0.3.18"
 retry-if = { path = ".", features = ["tracing"] }
