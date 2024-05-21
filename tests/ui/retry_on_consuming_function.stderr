@@ -10,6 +10,3 @@ error[E0382]: use of moved value: `self`
    |
 note: `into` takes ownership of the receiver `self`, which moves `self`
   --> $RUST/core/src/convert/mod.rs
-   |
-   |     fn into(self) -> T;
-   |             ^^^^
