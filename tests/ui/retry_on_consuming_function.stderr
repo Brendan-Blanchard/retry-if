@@ -1,0 +1,15 @@
+error[E0382]: use of moved value: `self`
+  --> tests/ui/retry_on_consuming_function.rs:35:9
+   |
+33 |     #[retry(BACKOFF_CONFIG, retry_if)]
+   |     ---------------------------------- inside of this loop
+34 |     async fn consume_self(self) -> NewCounter {
+   |                           ---- move occurs because `self` has type `Counter`, which does not implement the `Copy` trait
+35 |         self.into()
+   |         ^^^^ ------ `self` moved due to this method call, in previous iteration of loop
+   |
+note: `into` takes ownership of the receiver `self`, which moves `self`
+  --> $RUST/core/src/convert/mod.rs
+   |
+   |     fn into(self) -> T;
+   |             ^^^^

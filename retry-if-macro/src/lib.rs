@@ -117,11 +117,12 @@ fn decorate_fn(mut impl_fn: ItemFn, config: &Ident, retry_if: &Ident) -> proc_ma
                 if !#retry_if(&result) || attempt >= #config.max_retries {
                     return result;
                 }
-                attempt += 1;
 
                 let retry_wait = #config.t_wait
                     .mul_f64(#config.backoff.powi(attempt))
                     .min(backoff_max);
+
+                attempt += 1;
 
                 if let Some(max_wait) = #config.t_wait_max {
                     let now = tokio::time::Instant::now();

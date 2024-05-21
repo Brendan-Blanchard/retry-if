@@ -73,8 +73,13 @@ traces will take on whatever instrumented scope is given to the parent function.
 - methods in impl blocks such as `async fn do_thing(&mut self) -> bool`
 - trait implementations in `impl <Trait> for <Struct> {}` blocks, such as `async fn do_thing(&self) -> String`
 
-It cannot, however, decorate impl functions that consume themselves, since this requires the first call
-consuming `self`.
+Use cases that retry-if cannot be applied to include:
+
+- Functions that take and consume `self`, since ownership is passed and `self` may no longer exist after the first call
+- Functions that rely on the try (?) operator on `Option`
+
+# Example: Non-Working Function That Consumes Self
+
 A non-working example of this is shown below, where `to_thing()` consumes `self`, making a second call impossible.
 
 ```rust
@@ -86,6 +91,29 @@ impl Thing {
     #[retry(...)]
     async fn to_thing(self) -> Other {
         self.into()
+    }
+}
+```
+
+# Example: Non-Working Function That Uses Try on Option
+
+A non-working example of this is shown below, where the function uses the try operator to exit early with an `Option`.
+This cannot work because the code is expanded with `Result<T, E>` as the primary use case, and it's not possible
+to determine if the `?` applies to a `Result` or an `Option` when looking at TokenStreams in the macro, making expansion
+to both impossible when parsing.
+
+```rust
+struct Thing {}
+
+struct Other {}
+
+impl Thing {
+    #[retry(...)]
+    async fn do_thing(self) -> Option<i32> {
+        // compilation fails here because this is expanded to match on `get_data()` and the match arms are Ok & Err
+        //  instead of Some & None
+        let data = get_data()?;
+        data * 2
     }
 }
 ```
