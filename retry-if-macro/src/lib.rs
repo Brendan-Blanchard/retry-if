@@ -2,9 +2,9 @@ use proc_macro2::Ident;
 use quote::quote;
 use syn::parse::Parser;
 use syn::punctuated::Punctuated;
-use syn::{ItemFn, parse_quote, Expr};
 use syn::visit_mut;
 use syn::visit_mut::VisitMut;
+use syn::{parse_quote, Expr, ItemFn};
 
 struct BlockModifier;
 
@@ -104,9 +104,9 @@ fn decorate_fn(mut impl_fn: ItemFn, config: &Ident, retry_if: &Ident) -> proc_ma
     (quote! {
         #(#attrs)*
         #vis #sig {
-            let start = tokio::time::Instant::now();
-            let backoff_max = #config.backoff_max.unwrap_or(std::time::Duration::MAX);
-            let mut attempt = 0;
+            let __start = tokio::time::Instant::now();
+            let __backoff_max = #config.backoff_max.unwrap_or(std::time::Duration::MAX);
+            let mut __attempt = 0;
 
             loop {
                 let result = 'block: {
@@ -114,19 +114,19 @@ fn decorate_fn(mut impl_fn: ItemFn, config: &Ident, retry_if: &Ident) -> proc_ma
                 };
 
                 // Return result if retry isn't required, or if we ran out of attempts
-                if !#retry_if(&result) || attempt >= #config.max_retries {
+                if !#retry_if(&result) || __attempt >= #config.max_retries {
                     return result;
                 }
 
                 let retry_wait = #config.t_wait
-                    .mul_f64(#config.backoff.powi(attempt))
-                    .min(backoff_max);
+                    .mul_f64(#config.backoff.powi(__attempt))
+                    .min(__backoff_max);
 
-                attempt += 1;
+                __attempt += 1;
 
                 if let Some(max_wait) = #config.t_wait_max {
                     let now = tokio::time::Instant::now();
-                    let since_start = now - start;
+                    let since_start = now - __start;
 
                     // Return if our overall duration is going to exceed `max_wait`
                     if since_start + retry_wait > max_wait {
@@ -135,11 +135,11 @@ fn decorate_fn(mut impl_fn: ItemFn, config: &Ident, retry_if: &Ident) -> proc_ma
                 }
 
                 if cfg!(feature = "tracing") {
-                    tracing::info!("Sleeping {retry_wait:?} on attempt {attempt}");
+                    tracing::info!("Sleeping {retry_wait:?} on attempt {__attempt}");
                 }
                 tokio::time::sleep(retry_wait).await;
             }
         }
     })
-        .into()
+    .into()
 }
