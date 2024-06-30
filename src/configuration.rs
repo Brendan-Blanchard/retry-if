@@ -82,6 +82,7 @@ use std::time::Duration;
 ///     backoff_max: Some(Duration::from_secs(30)),
 /// };
 /// ```
+#[derive(Debug, Clone, Copy)]
 pub struct ExponentialBackoffConfig {
     /// maximum number of retry attempts to make
     pub max_retries: i32,
