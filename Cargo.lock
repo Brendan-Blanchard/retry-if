@@ -234,9 +234,9 @@ checksum = "8afb450f006bf6385ca15ef45d71d2288452bc3683ce2e2cacc0d18e4be60b58"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.81"
+version = "1.0.86"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d1597b0c024618f09a9c3b8655b7e430397a36d23fdafec26d6965e9eec3eba"
+checksum = "5e719e8df665df0d1c8fbfd238015744736151d4445ec0836b8e628aae103b77"
 dependencies = [
  "unicode-ident",
 ]
@@ -273,7 +273,7 @@ dependencies = [
 
 [[package]]
 name = "retry-if-macro"
-version = "0.1.0"
+version = "0.2.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -375,9 +375,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.60"
+version = "2.0.71"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "909518bc7b1c9b779f1bbf07f2929d35af9f0f37e47c6e9ef7f9dddc1e1821f3"
+checksum = "b146dcf730474b4bcd16c311627b31ede9ab149045db4d6088b3becaea046462"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -526,9 +526,9 @@ dependencies = [
 
 [[package]]
 name = "trybuild"
-version = "1.0.96"
+version = "1.0.97"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "33a5f13f11071020bb12de7a16b925d2d58636175c20c11dc5f96cb64bb6c9b3"
+checksum = "5b1e5645f2ee8025c2f1d75e1138f2dd034d74e6ba54620f3c569ba2a2a1ea06"
 dependencies = [
  "glob",
  "serde",

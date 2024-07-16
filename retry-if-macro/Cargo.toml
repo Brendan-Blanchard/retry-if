@@ -1,6 +1,6 @@
 [package]
 name = "retry-if-macro"
-version = "0.1.0"
+version = "0.2.1"
 edition = "2021"
 authors = ["Brendan Blanchard"]
 description = "A tokio-compatible attribute-macro for decorating methods and functions with an exponential backoff."
@@ -11,9 +11,9 @@ categories = ["asynchronous", "concurrency", "web-programming"]
 exclude = [".idea", ".gitignore", ".github"]
 
 [dependencies]
-proc-macro2 = "1.0.81"
+proc-macro2 = "1.0.86"
 quote = "1.0.36"
-syn = { version = "2.0.60", features = ["full", "visit-mut"] }
+syn = { version = "2.0.71", features = ["full", "visit-mut"] }
 tracing = { version = "0.1.40", optional = true }
 
 [features]

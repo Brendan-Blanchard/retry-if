@@ -12,11 +12,11 @@ categories = ["asynchronous", "concurrency", "web-programming"]
 exclude = [".idea", ".gitignore", ".github"]
 
 [dependencies]
-retry-if-macro = { version = "0.1.0", path = "retry-if-macro", default-features = false }
+retry-if-macro = { version = "0.2.1", path = "retry-if-macro", default-features = false }
 tokio = { version = "1.38.0", features = ["full"] }
 
 [dev-dependencies]
-trybuild = "1.0.96"
+trybuild = "1.0.97"
 tracing = "0.1.40"
 tracing-subscriber = "0.3.18"
 retry-if = { path = ".", features = ["tracing"] }
