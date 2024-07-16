@@ -1,6 +1,6 @@
 [package]
 name = "retry-if-macro"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 authors = ["Brendan Blanchard"]
 description = "A tokio-compatible attribute-macro for decorating methods and functions with an exponential backoff."
