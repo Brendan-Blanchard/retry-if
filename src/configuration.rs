@@ -82,7 +82,9 @@ use std::time::Duration;
 ///     backoff_max: Some(Duration::from_secs(30)),
 /// };
 /// ```
-#[derive(Debug, Clone, Copy)]
+
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ExponentialBackoffConfig {
     /// maximum number of retry attempts to make
     pub max_retries: i32,
@@ -95,4 +97,49 @@ pub struct ExponentialBackoffConfig {
     /// maximum time to wait for any single retry, i.e. backoff exponentially up to this duration,
     /// then wait in constant time of `backoff_max`
     pub backoff_max: Option<Duration>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[cfg(feature = "serde")]
+    #[test]
+    fn test_simple_deserialization() {
+        let raw = r#"{"max_retries": 3, "t_wait": {"secs": 5,"nanos": 0}, "backoff": 2}"#;
+        let expected_config = ExponentialBackoffConfig {
+            max_retries: 3,
+            t_wait: Duration::from_secs(5),
+            backoff: 2.0,
+            t_wait_max: None,
+            backoff_max: None,
+        };
+
+        let config: ExponentialBackoffConfig = serde_json::from_str(raw).unwrap();
+
+        assert_eq!(expected_config, config);
+    }
+
+    #[cfg(feature = "serde")]
+    #[test]
+    fn test_deserialization_with_optionals() {
+        let raw = r#"{
+            "max_retries": 3,
+            "t_wait": {"secs": 5,"nanos": 0},
+            "backoff": 2,
+            "t_wait_max": {"secs": 120,"nanos": 0},
+            "backoff_max": {"secs": 15,"nanos": 0}
+        }"#;
+        let expected_config = ExponentialBackoffConfig {
+            max_retries: 3,
+            t_wait: Duration::from_secs(5),
+            backoff: 2.0,
+            t_wait_max: Some(Duration::from_secs(120)),
+            backoff_max: Some(Duration::from_secs(15)),
+        };
+
+        let config: ExponentialBackoffConfig = serde_json::from_str(raw).unwrap();
+
+        assert_eq!(expected_config, config);
+    }
 }
