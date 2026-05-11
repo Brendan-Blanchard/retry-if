@@ -4,6 +4,12 @@
 
 ...
 
+### v0.3.0
+
+- Change `ExponentialBackoffConfig.max_retries` to `u32` to better reflect use
+    - **Breaking change that will require clients moving this field to u32**
+- Add `ExponentialBackoffConfig::get_backoff_duration` helper for custom uses
+
 ### v0.2.3
 
 - Add optional feature support for serde

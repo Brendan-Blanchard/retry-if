@@ -87,7 +87,7 @@ use std::time::Duration;
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ExponentialBackoffConfig {
     /// maximum number of retry attempts to make
-    pub max_retries: i32,
+    pub max_retries: u32,
     /// initial duration to wait
     pub t_wait: Duration,
     /// backoff exponent, e.g. `2.0` for a classic exponential backoff
@@ -97,6 +97,20 @@ pub struct ExponentialBackoffConfig {
     /// maximum time to wait for any single retry, i.e. backoff exponentially up to this duration,
     /// then wait in constant time of `backoff_max`
     pub backoff_max: Option<Duration>,
+}
+
+impl ExponentialBackoffConfig {
+    /// Calculate the backoff for the provided attempt.
+    ///
+    /// Example: attempt 3 with an initial t_wait of 2s would be 2.0^3 = 8s
+    ///
+    /// Note: does not take into account the maximum number of retries and will produce wait times
+    /// that the usage in the macro would not.
+    pub fn get_backoff_duration(&self, attempt: u32) -> Duration {
+        self.t_wait
+            .mul_f64(self.backoff.powi(attempt as i32))
+            .min(self.backoff_max.unwrap_or(Duration::MAX))
+    }
 }
 
 #[cfg(test)]
@@ -141,5 +155,63 @@ mod tests {
         let config: ExponentialBackoffConfig = serde_json::from_str(raw).unwrap();
 
         assert_eq!(expected_config, config);
+    }
+
+    #[test]
+    fn test_backoff_duration() {
+        let backoff = ExponentialBackoffConfig {
+            max_retries: 3,
+            t_wait: Duration::from_secs(1),
+            backoff: 2.0,
+            t_wait_max: None,
+            backoff_max: None,
+        };
+
+        assert_eq!(Duration::from_secs(1), backoff.get_backoff_duration(0));
+        assert_eq!(Duration::from_secs(2), backoff.get_backoff_duration(1));
+        assert_eq!(Duration::from_secs(4), backoff.get_backoff_duration(2));
+    }
+
+    #[test]
+    fn test_linear_backoff_duration() {
+        let backoff = ExponentialBackoffConfig {
+            max_retries: 3,
+            t_wait: Duration::from_secs(2),
+            backoff: 1.0,
+            t_wait_max: None,
+            backoff_max: None,
+        };
+
+        assert_eq!(Duration::from_secs(2), backoff.get_backoff_duration(0));
+        assert_eq!(Duration::from_secs(2), backoff.get_backoff_duration(1));
+        assert_eq!(Duration::from_secs(2), backoff.get_backoff_duration(2));
+    }
+
+    #[test]
+    fn test_backoff_duration_exponent() {
+        let backoff = ExponentialBackoffConfig {
+            max_retries: 3,
+            t_wait: Duration::from_secs(1),
+            backoff: 3.0,
+            t_wait_max: None,
+            backoff_max: None,
+        };
+
+        assert_eq!(Duration::from_secs(1), backoff.get_backoff_duration(0));
+        assert_eq!(Duration::from_secs(3), backoff.get_backoff_duration(1));
+        assert_eq!(Duration::from_secs(9), backoff.get_backoff_duration(2));
+    }
+
+    #[test]
+    fn test_backoff_duration_max_wait() {
+        let backoff = ExponentialBackoffConfig {
+            max_retries: 3,
+            t_wait: Duration::from_secs(1),
+            backoff: 2.0,
+            t_wait_max: None,
+            backoff_max: Some(Duration::from_secs(3)),
+        };
+
+        assert_eq!(Duration::from_secs(3), backoff.get_backoff_duration(2));
     }
 }
