@@ -82,7 +82,6 @@ use std::time::Duration;
 ///     backoff_max: Some(Duration::from_secs(30)),
 /// };
 /// ```
-
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ExponentialBackoffConfig {
