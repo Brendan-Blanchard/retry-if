@@ -2,11 +2,11 @@
 //!
 //! It first sets up a subscriber that prints to stdout, then conducts a normal test so the output
 //! of retries can be seen in the console.
-use retry_if::{retry, ExponentialBackoffConfig};
+use retry_if::{ExponentialBackoffConfig, retry};
 use std::time::Duration;
-use tokio::time::{pause, Instant};
+use tokio::time::{Instant, pause};
 use tracing_subscriber::layer::SubscriberExt;
-use tracing_subscriber::{fmt, Registry};
+use tracing_subscriber::{Registry, fmt};
 
 const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {
     max_retries: 5,

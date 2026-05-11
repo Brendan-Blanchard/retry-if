@@ -1,4 +1,4 @@
-use retry_if::{retry, ExponentialBackoffConfig};
+use retry_if::{ExponentialBackoffConfig, retry};
 use std::num::ParseIntError;
 use std::str::FromStr;
 use std::time::Duration;

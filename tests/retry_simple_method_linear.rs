@@ -1,9 +1,9 @@
 //! This example tests a backoff configuration with an exponent of 1.0, thus a linear backoff.
 //!
 //! A max of 5 tries should take 15s in total.
-use retry_if::{retry, ExponentialBackoffConfig};
+use retry_if::{ExponentialBackoffConfig, retry};
 use std::time::Duration;
-use tokio::time::{pause, Instant};
+use tokio::time::{Instant, pause};
 
 const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {
     max_retries: 5,

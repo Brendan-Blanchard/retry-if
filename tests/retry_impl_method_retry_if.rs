@@ -3,9 +3,9 @@
 //!
 //! The expectation is that two retries will take 1s, 3s, for a total of 4s of execution time. No
 //! other conditions will be triggered.
-use retry_if::{retry, ExponentialBackoffConfig};
+use retry_if::{ExponentialBackoffConfig, retry};
 use std::time::Duration;
-use tokio::time::{pause, Instant};
+use tokio::time::{Instant, pause};
 
 const BACKOFF_CONFIG: ExponentialBackoffConfig = ExponentialBackoffConfig {
     max_retries: 5,

@@ -1,7 +1,7 @@
-use retry_if::{retry, ExponentialBackoffConfig};
+use retry_if::{ExponentialBackoffConfig, retry};
 use std::num::TryFromIntError;
 use std::time::Duration;
-use tokio::time::{pause, Instant};
+use tokio::time::{Instant, pause};
 
 // A backoff that will retry a failing function up to 5 times, waiting 1s the first retry and
 //  doubling the wait with each retry.
