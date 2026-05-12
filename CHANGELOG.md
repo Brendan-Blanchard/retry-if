@@ -4,6 +4,10 @@
 
 ...
 
+### v0.3.1
+
+- Fix release by bumping `retry-if-macro` version and pointing to it
+
 ### v0.3.0
 
 - Change `ExponentialBackoffConfig.max_retries` to `u32` to better reflect use
